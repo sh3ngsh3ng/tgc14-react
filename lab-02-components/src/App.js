@@ -2,7 +2,6 @@ import React from 'react'
 import "./App.css"
 import AlertBox from "./AlertBox"
 
-
 // the foobar function is a NORMAL
 // function, not a component
 function foobar() {
