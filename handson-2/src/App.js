@@ -9,6 +9,7 @@ function App() {
      {/* Hands on 2.2 */}
      <BorderedImageFrame img={durian}/>
      <BorderedImageFrame img={require('./merlion.jpg').default}/>
+     <img src="ramen.jpg"/>
    </React.Fragment>
   );
 }
