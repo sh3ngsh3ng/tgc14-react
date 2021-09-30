@@ -6,7 +6,6 @@ function App() {
   return (
     <div>
       <Counter color="purple" startingNumber={-10}/>
-       <Counter color="purple" startingNumber={-10}/>
     </div>
   );
 }

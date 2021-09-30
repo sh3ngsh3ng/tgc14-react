@@ -17,12 +17,28 @@ export default class Counter extends React.Component {
         return (
             <React.Fragment>
                 <div style={{color:this.props.color}}>Number: {this.state.number}</div>
+                <button onClick={this.increment}>+</button>
                 <button onClick={this.changeTen}>Change to 10</button>
+                <button onClick={this.decrement}>-</button>
             </React.Fragment>
         )
     }
 
-    changeTen = () => {
+    increment = () => {
+        this.setState({
+            'number' : this.state.number + 1
+        })
+    }
+
+    decrement = () => {
+        this.setState({
+            'number': this.state.number - 1
+        })
+    }
+
+    // event handler
+    // we must use arrow functions
+    changeTen = () =>{
         // cannot change (i.e mutate) a state variable directly
         // this.state.number = 10;
 
