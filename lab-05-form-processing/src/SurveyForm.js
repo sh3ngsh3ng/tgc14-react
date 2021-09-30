@@ -12,17 +12,17 @@ export default class SurveyForm extends React.Component {
             <React.Fragment>
                 <div>
                      <label>Name:</label>
-                     <input type="text" value={this.state.name} onChange={this.updateName}/>
+                     <input type="text" name="name" value={this.state.name} onChange={this.updateFormField}/>
                 </div>
                 <div>
                     <label>Favourite Color</label>
-                    <input type="radio" name="color" value="red" onChange={this.updateColour} checked={this.state.colour == 'red'}/><span>Red</span>
-                    <input type="radio" name="color" value="blue" onChange={this.updateColour} checked={this.state.colour == 'blue'}/><span>Blue</span>
-                    <input type="radio" name="color" value="green" onChange={this.updateColour} checked={this.state.colour == 'green'}/><span>Green</span>
+                    <input type="radio" name="colour" value="red" onChange={this.updateFormField} checked={this.state.colour == 'red'}/><span>Red</span>
+                    <input type="radio" name="colour" value="blue" onChange={this.updateFormField} checked={this.state.colour == 'blue'}/><span>Blue</span>
+                    <input type="radio" name="colour" value="green" onChange={this.updateFormField} checked={this.state.colour == 'green'}/><span>Green</span>
                 </div>
                 <div>
                 <label>Country:</label>
-                    <select onChange={this.updateCountry} value={this.state.country}>                     
+                    <select onChange={this.updateCountry} value={this.state.country} name="country">                     
                         <option value="sg">Singapore</option>
                         <option value="my">Malaysia</option>
                         <option value="in">Indonesia</option>
@@ -31,6 +31,14 @@ export default class SurveyForm extends React.Component {
             </React.Fragment>
 
         )
+    }
+
+    updateFormField = (evt) => {
+        console.log("evt.target.name =>", evt.target.name);
+        console.log("evt.target.value =>", evt.target.value);
+        this.setState({
+            [evt.target.name] : evt.target.value
+        })
     }
 
     updateName = (evt) => {
