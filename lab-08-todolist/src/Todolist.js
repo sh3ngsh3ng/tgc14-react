@@ -212,7 +212,7 @@ export default class Todolist extends React.Component {
         this.setState({
             'tasks':cloned,
             'taskBeingEdited': 0
-        })
+        })       
     }
 
     render() {
