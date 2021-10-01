@@ -1,76 +1,36 @@
 import React from 'react'
-
+import axios from 'axios'
 export default class SurveyForm extends React.Component {
     state = {
         "name": "",
         "colour": "red",
         "country": "my",
-        "fruits": []
+        "fruits": [],
+        "all_countries":[],
+        "all_fruits":[],
+        "all_colours":[]
+    }  
+
+    async componentDidMount() {
+        let r = await axios.get('colours.json');
+        let colours = r.data;
+
+        r = await axios.get('countries.json');
+        let countries = r.data;
+
+        r = await axios.get('fruits.json');
+        let fruits = r.data;
+
+        this.setState({
+            "all_countries" : countries,
+            "all_fruits": fruits,
+            "all_colours": colours
+        })
     }
-
-    countries = [
-        {
-            "display": "Singapore",
-            "value": "sg"
-        },
-        {
-            "display": "Malaysia",
-            "value": "my"
-        },
-        {
-            "display": "Indonesia",
-            "value": "in"
-        },
-        {
-            "display": "Vietnam",
-            "value":"vn"
-        }
-    ]
-
-
-
-    fruits = [
-        {
-            "display": "Apples",
-            "value": "apples"
-        },
-        {
-            "display": "Bananas",
-            "value": "bananas"
-        },
-        {
-            "display": "Oranges",
-            "value": "oranges"
-
-        },
-        {
-            "display": "Watermelon",
-            "value":"watermelon"
-        }
-    ]
-
-    colours = [
-        {
-            "display": "Red",
-            "value": "red"
-        },
-        {
-            "display": "Green",
-            "value": "green"
-        },
-        {
-            "display": "Blue",
-            "value": "blue"
-        },
-        {
-            "display":"Purple",
-            "value":"purple"
-        }
-    ]
 
     renderColours() {
         let colourJSX = [];
-        for (let colour of this.colours) {
+        for (let colour of this.state.all_colours) {
             let e = (
                 <React.Fragment>
                     <input type="radio" 
@@ -102,7 +62,7 @@ export default class SurveyForm extends React.Component {
                     <label>Country:</label>
                     <select onChange={this.updateCountry} value={this.state.country} name="country">
                     {
-                        this.countries.map(function(country){
+                        this.state.all_countries.map(function(country){
                             return <option value={country.value}>
                                 {country.display}
                             </option>
@@ -113,7 +73,7 @@ export default class SurveyForm extends React.Component {
                 <div>
                     <label>Fruits:</label>                    
                     {
-                        this.fruits.map((fruit) => {       
+                        this.state.all_fruits.map((fruit) => {       
                             return (
                                 <React.Fragment>
                                     <input type="checkbox"
