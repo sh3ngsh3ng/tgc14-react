@@ -42,6 +42,10 @@ export default class SurveyForm extends React.Component {
             "display": "Oranges",
             "value": "oranges"
 
+        },
+        {
+            "display": "Watermelon",
+            "value":"watermelon"
         }
     ]
 
@@ -107,11 +111,21 @@ export default class SurveyForm extends React.Component {
                     </select>
                 </div>
                 <div>
-                    <label>Fruits:</label>
-                    <input type="checkbox" name="fruits" value="apple" onChange={this.updateFruitsV3} /><span>Apple</span>
-                    <input type="checkbox" name="fruits" value="oranges" onChange={this.updateFruitsV3} /><span>Oranges</span>
-                    <input type="checkbox" name="fruits" value="durians" onChange={this.updateFruitsV3} /><span>Durians</span>
-                    <input type="checkbox" name="fruits" value="dragonfruits" onChange={this.updateFruitsV3} /><span>Dragonfruits</span>
+                    <label>Fruits:</label>                    
+                    {
+                        this.fruits.map((fruit) => {       
+                            return (
+                                <React.Fragment>
+                                    <input type="checkbox"
+                                           name="fruits"
+                                           value={fruit.value}
+                                           onChange={this.updateFruits} />
+                                    <span>{fruit.display}</span>
+                                </React.Fragment>
+
+                            )
+                        })
+                    }
                 </div>
 
                 <button disabled={this.getDisabledStatus()}>Ok</button>
