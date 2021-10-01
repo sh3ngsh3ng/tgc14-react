@@ -37,9 +37,14 @@ export default class SurveyForm extends React.Component {
                     <input type="checkbox" name="fruits" value="dragonfruits" onChange={this.updateFruitsV3} /><span>Dragonfruits</span>
                 </div>
 
+            <button disabled={this.getDisabledStatus()}>Ok</button>    
             </React.Fragment>
 
         )
+    }
+
+    getDisabledStatus() {
+        return !this.state.name || !this.state.colour || !this.state.country || this.state.fruits.length == 0
     }
 
     updateFruits = (evt) => {
@@ -66,6 +71,8 @@ export default class SurveyForm extends React.Component {
             })
 
         } else {
+            // The value isn't in the array means the checkbox is going from unchecked to checked
+
             // 1. make a copy of the original array
             let clone = this.state.fruits.slice();
 
