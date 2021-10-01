@@ -37,9 +37,7 @@ export default class GuestList extends React.Component {
                 {this.renderGuests()}
                 <h1>Method 3</h1>
                 <ul>
-                {this.state.guests.map(function(item){
-                    return <li>{item}</li>
-                })}
+                {this.state.guests.map(i => <li>{i}</li>)}
                 </ul>
             </React.Fragment>
 
