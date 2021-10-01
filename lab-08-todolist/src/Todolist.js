@@ -78,7 +78,6 @@ export default class Todolist extends React.Component {
         let clonedArray = this.state.tasks.slice();
 
         // step 2: replace the original task in the clone with the modified task
-
         // first method : replace by index
         let indexOfModifiedTask = clonedArray.findIndex( t => t.id == modifiedTask.id);
         clonedArray[indexOfModifiedTask] = modifiedTask;
@@ -87,6 +86,50 @@ export default class Todolist extends React.Component {
         this.setState({
             'tasks': clonedArray
         })
+    }
+
+    checkTaskV2 = (taskId) => {
+        let currentTask = this.state.tasks.filter( t => t.id == taskId)[0];
+        let modifiedTask = { ...currentTask, done: !currentTask.done}; 
+
+        let indexToModify = this.state.tasks.findIndex(t => t.id == modifiedTask.id);
+        let clonedArray = [
+            ...this.state.tasks.slice(0, indexToModify),
+            modifiedTask,
+            ...this.state.tasks.slice(indexToModify+1)
+        ]
+        this.setState({
+            'tasks': clonedArray
+        })
+    }
+
+    checkTaskV3 = (taskId) => {
+        let currentTask = this.state.tasks.filter( t => t.id == taskId)[0];
+        let modifiedTask = { ...currentTask, done: !currentTask.done}; 
+
+        let clonedArray = this.state.tasks.map( t => {
+            if (t.id != taskId) {
+                return t;
+            } else {
+                return modifiedTask;
+            }
+        })
+        this.setState({
+            'tasks': clonedArray
+        })
+    }
+
+    deleteTask = (taskId) => {
+        // get the index of the task that we want to delete
+        let indexToDelete = this.state.tasks.findIndex( t => t.id == taskId);
+        let clonedArray = [
+            ...this.state.tasks.slice(0, indexToDelete),
+            ...this.state.tasks.slice(indexToDelete+1)
+        ]
+        this.setState({
+            'tasks': clonedArray
+        })
+
     }
 
     render() {
@@ -120,8 +163,11 @@ export default class Todolist extends React.Component {
                                     value={t.done} 
                                     checked={t.done}
                                     onChange={()=>{
-                                        this.checkTask(t.id)
+                                        this.checkTaskV2(t.id)
                                     }}/>
+                                    <button onClick={()=>{
+                                        this.deleteTask(t.id);
+                                    }}>Delete</button>
                             </li>
                         ))
                     }
