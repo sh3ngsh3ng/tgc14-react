@@ -15,29 +15,34 @@ export default class MovieList extends React.Component {
             {
                 '_id': 2,
                 'title': 'The Return of the Jedi',
-                'genre': 'science-fiction',
+                'genre': 'science-fic',
                 'themes': ['heroic', 'epic'],
                 'summary': "They are actually sisters and brothers"
             },
             {
                 '_id': 3,
                 'title': 'Dune',
-                'genre': 'science-fiction',
+                'genre': 'science-fic',
                 'themes': ['dark', 'epic', 'political'],
                 'summary': "The spice must flow"
             }
         ],
-        newMovieTitle:"",
-        newMovieGenre:"",
-        newMovieThemes:[],
-        newMovieSummary:""
+        newMovieTitle: "",
+        newMovieGenre: "",
+        newMovieThemes: [],
+        newMovieSummary: "",
+        movieBeingEdited: {},
+        modifiedMovieTitle: "",
+        modifiedMovieGenre: "",
+        modifiedMovieThemes: "",
+        modifiedMovieSummary: ""
     }
 
     // update form field for text input type and radio buttons
     // remeber to use arrow functions for event handler
     updateFormField = (evt) => {
         this.setState({
-            [evt.target.name] : evt.target.value
+            [evt.target.name]: evt.target.value
         })
     }
 
@@ -47,13 +52,13 @@ export default class MovieList extends React.Component {
         // 2. if does not exists, then the user is CHECKING the box
         if (this.state.newMovieThemes.includes(evt.target.value)) {
             let indexToRemove = this.state.newMovieThemes.indexOf(evt.target.value);
-            let cloned = [ ...this.state.newMovieThemes.slice(0, indexToRemove), ...this.state.newMovieThemes.slice(indexToRemove+1)];
+            let cloned = [...this.state.newMovieThemes.slice(0, indexToRemove), ...this.state.newMovieThemes.slice(indexToRemove + 1)];
             this.setState({
                 'newMovieThemes': cloned
             })
         } else {
             // clone the array
-            let cloned = [ ...this.state.newMovieThemes, evt.target.value ];
+            let cloned = [...this.state.newMovieThemes, evt.target.value];
             this.setState({
                 'newMovieThemes': cloned
             })
@@ -65,24 +70,33 @@ export default class MovieList extends React.Component {
         let movieJSX = [];
         for (let movie of this.state.movies) {
 
-            // create the JSX for each movie
-            // the key is only required for list rendering
-            let eachMovieJSX = (<React.Fragment key={movie._id}>
-                <div className="card my-3" style={{ width: '18rem' }}>
-                    <div className="card-body">
-                        <h5 className="card-title">{movie.title}</h5>
-                        <p className="card-text">{movie.summary}</p>
-                        <div>
-                            <p>Genre: {movie.genre}</p>
-                            <p>Themes: {movie.themes.join(", ")}</p>
+            // check fi the movie that we are displaying is not the one being edited
+            if (movie._id != this.state.movieBeingEdited._id) {
+                // create the JSX for each movie
+                // the key is only required for list rendering
+                let eachMovieJSX = (<React.Fragment key={movie._id}>
+                    <div className="card my-3" style={{ width: '18rem' }}>
+                        <div className="card-body">
+                            <h5 className="card-title">{movie.title}</h5>
+                            <p className="card-text">{movie.summary}</p>
+                            <div>
+                                <p>Genre: {movie.genre}</p>
+                                <p>Themes: {movie.themes.join(", ")}</p>
+                            </div>
+                            <button className="btn btn-primary" onClick={() => {
+                                this.beginEditMovie(movie);
+                            }}>Edit</button>
                         </div>
-                        <button className="btn btn-primary">Go somewhere</button>
                     </div>
-                </div>
-            </React.Fragment>)
+                </React.Fragment>)
 
-            // push the JSX into the array
-            movieJSX.push(eachMovieJSX);
+                // push the JSX into the array
+                movieJSX.push(eachMovieJSX);
+            } else {
+                let eachMovieJSX = this.displayEditForm();
+                movieJSX.push(eachMovieJSX);
+            }
+
         }
 
         return movieJSX;
@@ -97,27 +111,27 @@ export default class MovieList extends React.Component {
             <div>
                 <label className="form-label">Summary:</label>
                 <textarea name="newMovieSummary"
-                 className="form-control"
-                 value={this.state.newMovieSummary}
-                 onChange={this.updateFormField}></textarea>
+                    className="form-control"
+                    value={this.state.newMovieSummary}
+                    onChange={this.updateFormField}></textarea>
             </div>
 
             <div>
                 <label className="form-label">Genre:</label>
                 <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="radio" value="fantasy" id="genre-fantasy" name="newMovieGenre" onChange={this.updateFormField} checked={this.state.newMovieGenre=='fantasy'}/>
+                    <input className="form-check-input mx-1" type="radio" value="fantasy" id="genre-fantasy" name="newMovieGenre" onChange={this.updateFormField} checked={this.state.newMovieGenre == 'fantasy'} />
                     <label className="form-check-label" htmlFor="genre-fantasy">
                         Fantasy
                     </label>
                 </div>
                 <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="radio" value="science-fic" id="genre-science-fic" name="newMovieGenre" onChange={this.updateFormField} checked={this.state.newMovieGenre=='science-fic'}/>
+                    <input className="form-check-input mx-1" type="radio" value="science-fic" id="genre-science-fic" name="newMovieGenre" onChange={this.updateFormField} checked={this.state.newMovieGenre == 'science-fic'} />
                     <label className="form-check-label" htmlFor="genre-science-fic">
                         Science Fiction
                     </label>
                 </div>
                 <div className="form-check-inline">
-                    <input className="form-check-input mx-1" type="radio" value="horror" id="genre-horror" name="newMovieGenre" onChange={this.updateFormField} checked={this.state.newMovieGenre=='horror'}/>
+                    <input className="form-check-input mx-1" type="radio" value="horror" id="genre-horror" name="newMovieGenre" onChange={this.updateFormField} checked={this.state.newMovieGenre == 'horror'} />
                     <label className="form-check-label" htmlFor="genre-horror">
                         Horror
                     </label>
@@ -126,25 +140,25 @@ export default class MovieList extends React.Component {
             <div>
                 <label className="form-label">Themes:</label>
                 <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="heroic" id="theme-heroic" name="newMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.newMovieThemes.includes('heroic')}/>
+                    <input className="form-check-input mx-1" type="checkbox" value="heroic" id="theme-heroic" name="newMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.newMovieThemes.includes('heroic')} />
                     <label className="form-check-label" for="theme-heroic">
                         Heroic
                     </label>
                 </div>
                 <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="dark" id="theme-dark" name="newMovieThemes" onChange={this.updateMovieCheckboxes}  checked={this.state.newMovieThemes.includes('dark')}/>
+                    <input className="form-check-input mx-1" type="checkbox" value="dark" id="theme-dark" name="newMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.newMovieThemes.includes('dark')} />
                     <label className="form-check-label" for="theme-dark">
                         Dark
                     </label>
                 </div>
                 <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="epic" id="genre-epic" name="newMovieThemes" onChange={this.updateMovieCheckboxes}  checked={this.state.newMovieThemes.includes('epic')}/>
+                    <input className="form-check-input mx-1" type="checkbox" value="epic" id="genre-epic" name="newMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.newMovieThemes.includes('epic')} />
                     <label className="form-check-label" for="theme-epic">
                         Epic
                     </label>
                 </div>
                 <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="political" id="genre-political" name="newMovieThemes" onChange={this.updateMovieCheckboxes}  checked={this.state.newMovieThemes.includes('political')}/>
+                    <input className="form-check-input mx-1" type="checkbox" value="political" id="genre-political" name="newMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.newMovieThemes.includes('political')} />
                     <label className="form-check-label" for="theme-polticial">
                         Political
                     </label>
@@ -154,6 +168,86 @@ export default class MovieList extends React.Component {
         </React.Fragment>)
     }
 
+    displayEditForm() {
+        return (<React.Fragment key={this.state.movieBeingEdited._id}>
+            <div>
+                <label className="form-label">Movie:</label>
+                <input type="text" name="modifiedMovieTitle" className="form-control" value={this.state.modifiedMovieTitle} onChange={this.updateFormField} />
+            </div>
+            <div>
+                <label className="form-label">Summary:</label>
+                <textarea name="modifiedMovieSummary"
+                    className="form-control"
+                    value={this.state.modifiedMovieSummary}
+                    onChange={this.updateFormField}></textarea>
+            </div>
+
+            <div>
+                <label className="form-label">Genre:</label>
+                <div className="form-check-inline mx-1">
+                    <input className="form-check-input mx-1" type="radio" value="fantasy" id="genre-fantasy" name="modifiedMovieGenre" 
+                        onChange={this.updateFormField} checked={this.state.modifiedMovieGenre == 'fantasy'} />
+                    <label className="form-check-label" htmlFor="genre-fantasy">
+                        Fantasy
+                    </label>
+                </div>
+                <div className="form-check-inline mx-1">
+                    <input className="form-check-input mx-1" type="radio" value="science-fic" id="genre-science-fic" name="modifiedMovieGenre"
+                         onChange={this.updateFormField} checked={this.state.modifiedMovieGenre == 'science-fic'} />
+                    <label className="form-check-label" htmlFor="genre-science-fic">
+                        Science Fiction
+                    </label>
+                </div>
+                <div className="form-check-inline">
+                    <input className="form-check-input mx-1" type="radio" value="horror" id="genre-horror" name="modifiedMovieGenre"
+                         onChange={this.updateFormField} checked={this.state.modifiedMovieGenre == 'horror'} />
+                    <label className="form-check-label" htmlFor="genre-horror">
+                        Horror
+                    </label>
+                </div>
+            </div>
+            <div>
+                <label className="form-label">Themes:</label>
+                <div className="form-check-inline mx-1">
+                    <input className="form-check-input mx-1" type="checkbox" value="heroic" id="theme-heroic" name="modifiedMovieThemes"
+                         onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('heroic')} />
+                    <label className="form-check-label" for="theme-heroic">
+                        Heroic
+                    </label>
+                </div>
+                <div className="form-check-inline mx-1">
+                    <input className="form-check-input mx-1" type="checkbox" value="dark" id="theme-dark" name="modifiedMovieThemes"
+                         onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('dark')} />
+                    <label className="form-check-label" for="theme-dark">
+                        Dark
+                    </label>
+                </div>
+                <div className="form-check-inline mx-1">
+                    <input className="form-check-input mx-1" type="checkbox" value="epic" id="genre-epic" name="modifiedMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('epic')} />
+                    <label className="form-check-label" for="theme-epic">
+                        Epic
+                    </label>
+                </div>
+                <div className="form-check-inline mx-1">
+                    <input className="form-check-input mx-1" type="checkbox" value="political" id="genre-political" name="modifiedMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('political')} />
+                    <label className="form-check-label" for="theme-polticial">
+                        Political
+                    </label>
+                </div>
+            </div>
+            <button className="btn btn-success" onClick={this.updateMovie}>Add Movie</button>
+        </React.Fragment>)
+    }
+
+    beginEditMovie(movie) {
+        this.setState({
+            'movieBeingEdited': movie,
+            'modifiedMovieTitle': movie.title,
+            'modifiedMovieSummary': movie.summary,
+            'modifiedMovieGenre': movie.genre,
+            'modifiedMovieThemes': movie.themes
+        })
+    }
 
     // create new movie
     createMovie = () => {
@@ -167,7 +261,7 @@ export default class MovieList extends React.Component {
 
         // clone, update the original array, replace the original array with the clone
         this.setState({
-            'movies' : [...this.state.movies, newMovie]
+            'movies': [...this.state.movies, newMovie]
         })
     }
 
