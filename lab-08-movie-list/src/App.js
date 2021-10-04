@@ -6,7 +6,7 @@ import MovieList from './MovieList';
 
 function App() {
   return (
-   <div class="container">
+   <div className="container">
      <MovieList/>
    </div>
   );
