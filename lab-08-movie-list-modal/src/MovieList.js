@@ -32,11 +32,7 @@ export default class MovieList extends React.Component {
         newMovieThemes: [],
         newMovieSummary: "",
         movieBeingEdited: {},
-        modifiedMovieTitle: "",
-        modifiedMovieGenre: "",
-        modifiedMovieThemes: "",
-        modifiedMovieSummary: "",
-        display:false
+        display: false
     }
 
     // update form field for text input type and radio buttons
@@ -61,7 +57,8 @@ export default class MovieList extends React.Component {
             let indexToRemove = arrayToModify.indexOf(evt.target.value);
             let cloned = [...arrayToModify.slice(0, indexToRemove), ...arrayToModify.slice(indexToRemove + 1)];
             this.setState({
-                [evt.target.name]: cloned            })
+                [evt.target.name]: cloned
+            })
         } else {
             // clone the array
             let cloned = [...arrayToModify, evt.target.value];
@@ -75,44 +72,30 @@ export default class MovieList extends React.Component {
     displayMovies() {
         let movieJSX = [];
         for (let movie of this.state.movies) {
-
-            // check fi the movie that we are displaying is not the one being edited
-            if (movie._id != this.state.movieBeingEdited._id) {
-                // create the JSX for each movie
-                // the key is only required for list rendering
-                let eachMovieJSX = (<React.Fragment key={movie._id}>
-                    <div className="card my-3" style={{ width: '18rem' }}>
-                        <div className="card-body">
-                            <h5 className="card-title">{movie.title}</h5>
-                            <p className="card-text">{movie.summary}</p>
-                            <div>
-                                <p>Genre: {movie.genre}</p>
-                                <p>Themes: {movie.themes.join(", ")}</p>
-                            </div>
-                            <button className="btn btn-success btn-sm" onClick={() => {
-                                this.beginEditMovie(movie);
-                            }}>Edit</button>
-                            <button className="btn btn-danger btn-sm mx-1" onClick={()=>{                                  
-                                this.deleteMovie(movie)
-                            }}>Delete</button>
+            // create the JSX for each movie
+            // the key is only required for list rendering
+            let eachMovieJSX = (<React.Fragment key={movie._id}>
+                <div className="card my-3" style={{ width: '18rem' }}>
+                    <div className="card-body">
+                        <h5 className="card-title">{movie.title}</h5>
+                        <p className="card-text">{movie.summary}</p>
+                        <div>
+                            <p>Genre: {movie.genre}</p>
+                            <p>Themes: {movie.themes.join(", ")}</p>
                         </div>
+                        <button className="btn btn-success btn-sm" onClick={() => {
+                            this.beginEditMovie(movie);
+                        }}>Edit</button>
+                        <button className="btn btn-danger btn-sm mx-1" onClick={() => {
+                            this.deleteMovie(movie)
+                        }}>Delete</button>
                     </div>
-                </React.Fragment>)
+                </div>
+            </React.Fragment>)
 
-                // push the JSX into the array
-                movieJSX.push(eachMovieJSX);
-            } else {
-                let eachMovieJSX = (<React.Fragment key={movie._id}>
-                    <div className="card" style={{ width: '18rem' }}>
-                        <h2 className="card-title">Editing {this.state.movieBeingEdited.title}</h2>
-                            <div className="card-body">
-                                {this.displayEditForm()}
-                            </div>
-                    </div>
+            // push the JSX into the array
+            movieJSX.push(eachMovieJSX);
 
-                </React.Fragment>)
-                movieJSX.push(eachMovieJSX);
-            }
 
         }
 
@@ -181,186 +164,132 @@ export default class MovieList extends React.Component {
                         Political
                     </label>
                 </div>
-            </div>
-            <button className="btn btn-success" onClick={this.createMovie}>Add Movie</button>
+            </div>           
         </React.Fragment>)
     }
 
     hideModalBox = () => {
         this.setState({
-            'display':false
+            'display': false
         })
     }
 
     displayModalBox() {
         if (this.state.display) {
-          return (
-            <React.Fragment>
-              <div
-                className="modal show fade"
-                tabIndex="-1"
-                style={{
-                  display: "block",
-                  backgroundColor: "rgba(0.5, 0.5, 0.5, 0.5)"
-                }}
-              >
-                <div className="modal-dialog modal-lg">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5 className="modal-title">Modal title</h5>
-                      <button
-                        type="button"
-                        className="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        onClick={this.hideModalBox}
-                      ></button>
+            return (
+                <React.Fragment>
+                    <div
+                        className="modal show fade"
+                        tabIndex="-1"
+                        style={{
+                            display: "block",
+                            backgroundColor: "rgba(0.5, 0.5, 0.5, 0.5)"
+                        }}
+                    >
+                        <div className="modal-dialog modal-lg">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Modal title</h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                        onClick={this.hideModalBox}
+                                    ></button>
+                                </div>
+                                <div className="modal-body">
+                                    {this.displayForm()}
+                                </div>
+                                <div className="modal-footer">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                        onClick={this.hideModalBox}
+                                    >
+                                        Close
+                                    </button>
+                                    {
+                                        /* if movieBeingEdited._id is not null, is not undefined and is not 0,
+                                         then display the button for updating movie, otherwise, display button
+                                        for creating a movie */
+                                        this.state.movieBeingEdited._id ? 
+                                            (
+                                                <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={this.updateMovie}
+                                                >
+                                                Update Movie
+                                                </button>
+                                            ) : (
+                                                <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={this.createMovie}
+                                                >
+                                                Add New Movie
+                                                </button>
+                                            )
+                                    }
+                                  
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="modal-body">
-                      {this.displayForm()}
-                    </div>
-                    <div className="modal-footer">
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                        onClick={this.hideModalBox}
-                      >
-                        Close
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={this.createMovie}
-                      >
-                        Add New Movie
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </React.Fragment>
-          );
+                </React.Fragment>
+            );
         } else {
-          return null;
+            return null;
         }
-      }
-
-    // display the form for editing a movie
-    displayEditForm() {
-        return (<React.Fragment key={"edit_form"}>
-            <div>
-                <label className="form-label">Movie:</label>
-                <input type="text" name="modifiedMovieTitle" className="form-control" value={this.state.modifiedMovieTitle} onChange={this.updateFormField} />
-            </div>
-            <div>
-                <label className="form-label">Summary:</label>
-                <textarea name="modifiedMovieSummary"
-                    className="form-control"
-                    value={this.state.modifiedMovieSummary}
-                    onChange={this.updateFormField}></textarea>
-            </div>
-
-            <div>
-                <label className="form-label">Genre:</label>
-                <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="radio" value="fantasy" id="genre-fantasy" name="modifiedMovieGenre" 
-                        onChange={this.updateFormField} checked={this.state.modifiedMovieGenre == 'fantasy'} />
-                    <label className="form-check-label" htmlFor="genre-fantasy">
-                        Fantasy
-                    </label>
-                </div>
-                <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="radio" value="science-fic" id="genre-science-fic" name="modifiedMovieGenre"
-                         onChange={this.updateFormField} checked={this.state.modifiedMovieGenre == 'science-fic'} />
-                    <label className="form-check-label" htmlFor="genre-science-fic">
-                        Science Fiction
-                    </label>
-                </div>
-                <div className="form-check-inline">
-                    <input className="form-check-input mx-1" type="radio" value="horror" id="genre-horror" name="modifiedMovieGenre"
-                         onChange={this.updateFormField} checked={this.state.modifiedMovieGenre == 'horror'} />
-                    <label className="form-check-label" htmlFor="genre-horror">
-                        Horror
-                    </label>
-                </div>
-            </div>
-            <div>
-                <label className="form-label">Themes:</label>
-                <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="heroic" id="theme-heroic" name="modifiedMovieThemes"
-                         onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('heroic')} />
-                    <label className="form-check-label" for="theme-heroic">
-                        Heroic
-                    </label>
-                </div>
-                <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="dark" id="theme-dark" name="modifiedMovieThemes"
-                         onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('dark')} />
-                    <label className="form-check-label" for="theme-dark">
-                        Dark
-                    </label>
-                </div>
-                <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="epic" id="genre-epic" name="modifiedMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('epic')} />
-                    <label className="form-check-label" for="theme-epic">
-                        Epic
-                    </label>
-                </div>
-                <div className="form-check-inline mx-1">
-                    <input className="form-check-input mx-1" type="checkbox" value="political" id="genre-political" name="modifiedMovieThemes" onChange={this.updateMovieCheckboxes} checked={this.state.modifiedMovieThemes.includes('political')} />
-                    <label className="form-check-label" for="theme-polticial">
-                        Political
-                    </label>
-                </div>
-            </div>
-            <button className="btn btn-success" onClick={this.updateMovie}>Update Movie</button>
-        </React.Fragment>)
     }
 
     // store which movie is being edited
     beginEditMovie(movie) {
         this.setState({
+            'display': true, // display the modal box
             'movieBeingEdited': movie,
-            'modifiedMovieTitle': movie.title,
-            'modifiedMovieSummary': movie.summary,
-            'modifiedMovieGenre': movie.genre,
-            'modifiedMovieThemes': movie.themes
+            'newMovieTitle': movie.title,
+            'newMovieSummary': movie.summary,
+            'newMovieGenre': movie.genre,
+            'newMovieThemes': movie.themes
         })
     }
 
     // save the chnanges and also set that no movie is being edited
-    updateMovie =() => {
-        
+    updateMovie = () => {
+
         // create a new movie object that reflects the updated movie        
         let clonedMovie = {
-            '_id' : this.state.movieBeingEdited._id,
-            'title': this.state.modifiedMovieTitle,
-            'genre': this.state.modifiedMovieGenre,
-            'summary': this.state.modifiedMovieSummary,
-            'themes': this.state.modifiedMovieThemes
+            '_id': this.state.movieBeingEdited._id,
+            'title': this.state.newMovieTitle,
+            'genre': this.state.newMovieGenre,
+            'summary': this.state.newMovieSummary,
+            'themes': this.state.newMovieThemes
         }
-        
-        let indexToReplace = this.state.movies.findIndex( eachMovie => 
+
+        let indexToReplace = this.state.movies.findIndex(eachMovie =>
             eachMovie._id == clonedMovie._id);
-        
+
         // 1. clone the array from the state        
         // 2. modify the cloned array
         // 3. replace the original array with the clone array
         let clonedMovies = [
             ...this.state.movies.slice(0, indexToReplace),
             clonedMovie,
-            ...this.state.movies.slice(indexToReplace+1)
+            ...this.state.movies.slice(indexToReplace + 1)
         ];
         this.setState({
             'movies': clonedMovies,
-            'movieBeingEdited':{
-                '_id':0
-            }
+            'movieBeingEdited': {
+                '_id': 0
+            },
+            'display' : false // to hide the modal box
         })
 
-        
-        
+
+
     }
 
     // create new movie
@@ -382,14 +311,14 @@ export default class MovieList extends React.Component {
 
     deleteMovie = (movieToDelete) => {
         // 1. find the index of the movie we want to delete
-        let indexToRemove = this.state.movies.findIndex( movie => movie._id == movieToDelete._id);
-   
+        let indexToRemove = this.state.movies.findIndex(movie => movie._id == movieToDelete._id);
+
         // 2. clone the original array
         // update the array
         // replace the array into the state
         let clonedArray = [
             ...this.state.movies.slice(0, indexToRemove),
-            ...this.state.movies.slice(indexToRemove+1)
+            ...this.state.movies.slice(indexToRemove + 1)
         ]
 
         this.setState({
@@ -399,9 +328,9 @@ export default class MovieList extends React.Component {
 
     render() {
         return (
-            <React.Fragment>                               
+            <React.Fragment>
                 <h1>Movies List</h1>
-                <button onClick={()=>{
+                <button onClick={() => {
                     this.setState({
                         'display': true
                     })
