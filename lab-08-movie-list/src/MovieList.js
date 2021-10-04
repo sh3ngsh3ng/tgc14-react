@@ -46,21 +46,26 @@ export default class MovieList extends React.Component {
         })
     }
 
+    // evt is an event object
+    // evt.target is the DOM element that the object takes place on
+    // evt.target.name is the 'name' attribute of the DOM element
     updateMovieCheckboxes = (evt) => {
         // check if the value that the user has clicked already exists
         // 1. if exists, then the user is UNCHECKING the box
         // 2. if does not exists, then the user is CHECKING the box
-        if (this.state.newMovieThemes.includes(evt.target.value)) {
-            let indexToRemove = this.state.newMovieThemes.indexOf(evt.target.value);
-            let cloned = [...this.state.newMovieThemes.slice(0, indexToRemove), ...this.state.newMovieThemes.slice(indexToRemove + 1)];
+
+        let arrayToModify = this.state[evt.target.name];
+
+        if (arrayToModify.includes(evt.target.value)) {
+            let indexToRemove = arrayToModify.indexOf(evt.target.value);
+            let cloned = [...arrayToModify.slice(0, indexToRemove), ...arrayToModify.slice(indexToRemove + 1)];
             this.setState({
-                'newMovieThemes': cloned
-            })
+                [evt.target.name]: cloned            })
         } else {
             // clone the array
-            let cloned = [...this.state.newMovieThemes, evt.target.value];
+            let cloned = [...arrayToModify, evt.target.value];
             this.setState({
-                'newMovieThemes': cloned
+                [evt.target.name]: cloned
             })
         }
     }
@@ -83,9 +88,13 @@ export default class MovieList extends React.Component {
                                 <p>Genre: {movie.genre}</p>
                                 <p>Themes: {movie.themes.join(", ")}</p>
                             </div>
-                            <button className="btn btn-primary" onClick={() => {
+                            <button className="btn btn-success btn-sm" onClick={() => {
                                 this.beginEditMovie(movie);
                             }}>Edit</button>
+                            <button className="btn btn-danger btn-sm mx-1" onClick={()=>{      
+                                alert(movie._id)               
+                                this.deleteMovie(movie)
+                            }}>Delete</button>
                         </div>
                     </div>
                 </React.Fragment>)
@@ -93,7 +102,15 @@ export default class MovieList extends React.Component {
                 // push the JSX into the array
                 movieJSX.push(eachMovieJSX);
             } else {
-                let eachMovieJSX = this.displayEditForm();
+                let eachMovieJSX = (<React.Fragment key={movie._id}>
+                    <div className="card" style={{ width: '18rem' }}>
+                        <h2 className="card-title">Editing {this.state.movieBeingEdited.title}</h2>
+                            <div className="card-body">
+                                {this.displayEditForm()}
+                            </div>
+                    </div>
+
+                </React.Fragment>)
                 movieJSX.push(eachMovieJSX);
             }
 
@@ -102,6 +119,7 @@ export default class MovieList extends React.Component {
         return movieJSX;
     }
 
+    // display the form for adding a new movied
     displayAddForm() {
         return (<React.Fragment>
             <div>
@@ -168,8 +186,9 @@ export default class MovieList extends React.Component {
         </React.Fragment>)
     }
 
+    // display the form for editing a movie
     displayEditForm() {
-        return (<React.Fragment key={this.state.movieBeingEdited._id}>
+        return (<React.Fragment key={"edit_form"}>
             <div>
                 <label className="form-label">Movie:</label>
                 <input type="text" name="modifiedMovieTitle" className="form-control" value={this.state.modifiedMovieTitle} onChange={this.updateFormField} />
@@ -235,10 +254,11 @@ export default class MovieList extends React.Component {
                     </label>
                 </div>
             </div>
-            <button className="btn btn-success" onClick={this.updateMovie}>Add Movie</button>
+            <button className="btn btn-success" onClick={this.updateMovie}>Update Movie</button>
         </React.Fragment>)
     }
 
+    // store which movie is being edited
     beginEditMovie(movie) {
         this.setState({
             'movieBeingEdited': movie,
@@ -247,6 +267,40 @@ export default class MovieList extends React.Component {
             'modifiedMovieGenre': movie.genre,
             'modifiedMovieThemes': movie.themes
         })
+    }
+
+    // save the chnanges and also set that no movie is being edited
+    updateMovie =() => {
+        
+        // create a new movie object that reflects the updated movie        
+        let clonedMovie = {
+            '_id' : this.state.movieBeingEdited._id,
+            'title': this.state.modifiedMovieTitle,
+            'genre': this.state.modifiedMovieGenre,
+            'summary': this.state.modifiedMovieSummary,
+            'themes': this.state.modifiedMovieThemes
+        }
+        
+        let indexToReplace = this.state.movies.findIndex( eachMovie => 
+            eachMovie._id == clonedMovie._id);
+        
+        // 1. clone the array from the state        
+        // 2. modify the cloned array
+        // 3. replace the original array with the clone array
+        let clonedMovies = [
+            ...this.state.movies.slice(0, indexToReplace),
+            clonedMovie,
+            ...this.state.movies.slice(indexToReplace+1)
+        ];
+        this.setState({
+            'movies': clonedMovies,
+            'movieBeingEdited':{
+                '_id':0
+            }
+        })
+
+        
+        
     }
 
     // create new movie
@@ -262,6 +316,23 @@ export default class MovieList extends React.Component {
         // clone, update the original array, replace the original array with the clone
         this.setState({
             'movies': [...this.state.movies, newMovie]
+        })
+    }
+
+    deleteMovie = (movieToDelete) => {
+        // 1. find the index of the movie we want to delete
+        let indexToRemove = this.state.movies.findIndex( movie => movie._id == movieToDelete._id);
+   
+        // 2. clone the original array
+        // update the array
+        // replace the array into the state
+        let clonedArray = [
+            ...this.state.movies.slice(0, indexToRemove),
+            ...this.state.movies.slice(indexToRemove+1)
+        ]
+
+        this.setState({
+            'movies': clonedArray
         })
     }
 
