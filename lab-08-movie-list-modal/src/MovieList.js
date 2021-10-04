@@ -35,7 +35,8 @@ export default class MovieList extends React.Component {
         modifiedMovieTitle: "",
         modifiedMovieGenre: "",
         modifiedMovieThemes: "",
-        modifiedMovieSummary: ""
+        modifiedMovieSummary: "",
+        display:false
     }
 
     // update form field for text input type and radio buttons
@@ -119,7 +120,7 @@ export default class MovieList extends React.Component {
     }
 
     // display the form for adding a new movied
-    displayAddForm() {
+    displayForm() {
         return (<React.Fragment>
             <div>
                 <label className="form-label">Movie:</label>
@@ -184,6 +185,66 @@ export default class MovieList extends React.Component {
             <button className="btn btn-success" onClick={this.createMovie}>Add Movie</button>
         </React.Fragment>)
     }
+
+    hideModalBox = () => {
+        this.setState({
+            'display':false
+        })
+    }
+
+    displayModalBox() {
+        if (this.state.display) {
+          return (
+            <React.Fragment>
+              <div
+                className="modal show fade"
+                tabIndex="-1"
+                style={{
+                  display: "block",
+                  backgroundColor: "rgba(0.5, 0.5, 0.5, 0.5)"
+                }}
+              >
+                <div className="modal-dialog modal-lg">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Modal title</h5>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                        onClick={this.hideModalBox}
+                      ></button>
+                    </div>
+                    <div className="modal-body">
+                      {this.displayForm()}
+                    </div>
+                    <div className="modal-footer">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                        onClick={this.hideModalBox}
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={this.createMovie}
+                      >
+                        Add New Movie
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        } else {
+          return null;
+        }
+      }
 
     // display the form for editing a movie
     displayEditForm() {
@@ -314,7 +375,8 @@ export default class MovieList extends React.Component {
 
         // clone, update the original array, replace the original array with the clone
         this.setState({
-            'movies': [...this.state.movies, newMovie]
+            'movies': [...this.state.movies, newMovie],
+            'display': false
         })
     }
 
@@ -337,15 +399,18 @@ export default class MovieList extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
-                <h1>Add a Movie</h1>
-                {/* display a form to add movie */}
-                {this.displayAddForm()}
-
+            <React.Fragment>                               
                 <h1>Movies List</h1>
+                <button onClick={()=>{
+                    this.setState({
+                        'display': true
+                    })
+                }}>Add new Movie</button>
                 {/* as long as the expression is an array of JSX elements,
                     React will perform list rendering */}
                 {this.displayMovies()}
+
+                {this.displayModalBox()}
             </React.Fragment>
 
         )
