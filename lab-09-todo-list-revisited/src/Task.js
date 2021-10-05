@@ -10,10 +10,23 @@ export default function Task(props) {
                     <li>Completed:
                         <input type="checkbox" 
                          value={props.task.done}
-                         checked={props.task.done}/>         
+                         checked={props.task.done}
+                         onChange={()=>{
+                             props.toggleTask(props.task)
+                         }}/>         
                     </li>
                 </ul>
-            </div>
+                <button className="btn btn-primary btn-sm mx-3"
+                    onClick={()=>{
+                        props.edit(props.task)
+                    }}
+                >Edit</button>
+                <button className="btn btn-danger btn-sm"
+                    onClick={()=>{
+                        props.delete(props.task)
+                    }}
+                >Delete</button>
+            </div>        
         </div>
     </React.Fragment>
 }
