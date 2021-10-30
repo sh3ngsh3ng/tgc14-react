@@ -130,7 +130,7 @@ export default class TaskList extends React.Component {
         return (<React.Fragment>
 
             {/* Render the add task form */}
-            <TaskForm
+            <AddTask
                 title="Add New Task"
                 taskName={this.state.newTask.description}
                 dueDate={this.state.newTask.date_due}
